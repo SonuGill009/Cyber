@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonu — Cybersecurity Specialist &amp; CyyberTalks</title>
+<style>
+  :root{
+    --bg: #070a12;
+    --panel: #0e1420;
+    --panel-2: #121a2b;
+    --line: #1e293f;
+    --text: #e6ecf5;
+    --muted: #7d8aa3;
+    --cyan: #3ddcff;
+    --amber: #ffb020;
+    --mono: 'IBM Plex Mono', 'Courier New', monospace;
+    --display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --body: 'Inter', 'Segoe UI', sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--cyan);color:#00131a;}
+
+  /* scroll progress */
+  #progress{
+    position:fixed;top:0;left:0;
+    height:2px;width:0%;
+    background:linear-gradient(90deg, var(--cyan), var(--amber));
+    z-index:200;
+    box-shadow:0 0 8px var(--cyan);
+    transition:width 0.08s linear;
+  }
+
+  /* custom cursor glow (desktop only) */
+  #cursor-glow{
+    position:fixed;
+    width:280px;height:280px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(61,220,255,0.06) 0%, transparent 70%);
+    pointer-events:none;
+    z-index:1;
+    transform:translate(-50%,-50%);
+    left:-300px;top:-300px;
+    transition:opacity 0.3s;
+  }
+
+  /* scanline texture */
+  body::before{
+    content:'';
+    position:fixed;inset:0;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 3px);
+    pointer-events:none;
+    z-index:1;
+  }
+
+  .grain-glow{
+    position:fixed;
+    top:-20%;left:50%;
+    width:900px;height:900px;
+    transform:translateX(-50%);
+    background:radial-gradient(circle, rgba(61,220,255,0.08) 0%, transparent 70%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  header{
+    position:fixed;top:0;left:0;right:0;
+    z-index:100;
+    background:rgba(7,10,18,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:1100px;margin:0 auto;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 24px;
+  }
+  .logo{
+    font-family:var(--mono);
+    font-size:15px;
+    letter-spacing:0.5px;
+    color:var(--cyan);
+  }
+  .logo span{color:var(--muted);}
+  .navlinks{display:flex;gap:28px;list-style:none;}
+  .navlinks a{
+    color:var(--muted);
+    text-decoration:none;
+    font-family:var(--mono);
+    font-size:13px;
+    letter-spacing:0.3px;
+    transition:color 0.2s;
+    position:relative;
+    padding-bottom:4px;
+  }
+  .navlinks a::after{
+    content:'';
+    position:absolute;left:0;bottom:0;
+    width:0%;height:1px;
+    background:var(--cyan);
+    transition:width 0.25s ease;
+  }
+  .navlinks a:hover, .navlinks a:focus-visible{color:var(--cyan);}
+  .navlinks a:hover::after, .navlinks a.active::after{width:100%;}
+  .navlinks a.active{color:var(--cyan);}
+
+  section{
+    position:relative;z-index:2;
+    max-width:1100px;
+    margin:0 auto;
+    padding:120px 24px 40px;
+  }
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding-top:100px;
+    position:relative;
+  }
+  #net-canvas{
+    position:absolute;
+    inset:0;
+    width:100%;height:100%;
+    z-index:-1;
+    opacity:0.55;
+  }
+  .terminal{
+    font-family:var(--mono);
+    font-size:14px;
+    color:var(--muted);
+    margin-bottom:28px;
+    min-height:60px;
+  }
+  .terminal .prompt{color:var(--cyan);}
+  .terminal .out{color:var(--amber);display:block;margin-top:4px;}
+  .terminal .cursor{
+    display:inline-block;width:8px;height:16px;
+    background:var(--cyan);
+    vertical-align:middle;
+    animation:blink 1s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  h1.name{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:clamp(48px, 9vw, 96px);
+    line-height:0.95;
+    letter-spacing:-2px;
+    opacity:0;
+    animation:rise 0.8s 0.15s ease forwards;
+  }
+  h1.name .alias{
+    color:var(--cyan);
+    cursor:default;
+    position:relative;
+    display:inline-block;
+  }
+  h1.name .alias:hover{animation:glitch 0.35s steps(2) infinite;}
+  @keyframes rise{
+    from{opacity:0;transform:translateY(16px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+  @keyframes glitch{
+    0%{transform:translate(0,0);text-shadow:none;}
+    20%{transform:translate(-2px,1px);text-shadow:2px 0 var(--amber), -2px 0 #ff3d6e;}
+    40%{transform:translate(2px,-1px);text-shadow:-2px 0 var(--amber), 2px 0 #ff3d6e;}
+    60%{transform:translate(-1px,0);text-shadow:1px 0 var(--amber), -1px 0 #ff3d6e;}
+    100%{transform:translate(0,0);text-shadow:none;}
+  }
+  .role, .tagline, .hero-links{
+    opacity:0;
+    animation:rise 0.7s ease forwards;
+  }
+  .role{animation-delay:0.35s;}
+  .tagline{animation-delay:0.5s;}
+  .hero-links{animation-delay:0.65s;}
+  .role{
+    font-family:var(--mono);
+    color:var(--amber);
+    font-size:clamp(14px,2vw,18px);
+    margin-top:18px;
+    letter-spacing:0.5px;
+  }
+  .tagline{
+    max-width:560px;
+    color:var(--muted);
+    margin-top:22px;
+    font-size:16px;
+  }
+  .hero-links{
+    margin-top:38px;
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    font-family:var(--mono);
+    font-size:13px;
+    padding:12px 22px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    color:var(--text);
+    text-decoration:none;
+    transition:all 0.2s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn.primary{
+    background:var(--cyan);
+    color:#00131a;
+    border-color:var(--cyan);
+    font-weight:600;
+  }
+  .btn.primary:hover{background:#5fe4ff;box-shadow:0 0 20px rgba(61,220,255,0.35);}
+  .btn:not(.primary):hover{border-color:var(--cyan);color:var(--cyan);}
+  .btn{will-change:transform;}
+
+  /* SECTION LABELS */
+  .eyebrow{
+    font-family:var(--mono);
+    color:var(--cyan);
+    font-size:12px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  h2{
+    font-family:var(--display);
+    font-size:clamp(28px,4vw,40px);
+    font-weight:700;
+    margin-bottom:34px;
+    letter-spacing:-1px;
+  }
+
+  /* ABOUT */
+  .about-grid{
+    display:grid;
+    grid-template-columns:1.2fr 1fr;
+    gap:48px;
+    align-items:start;
+  }
+  .about-text p{color:var(--muted);margin-bottom:16px;font-size:15.5px;}
+  .about-text strong{color:var(--text);}
+  .facts{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .fact-row{
+    display:flex;
+    justify-content:space-between;
+    padding:14px 18px;
+    border-bottom:1px solid var(--line);
+    font-size:13.5px;
+  }
+  .fact-row:last-child{border-bottom:none;}
+  .fact-label{font-family:var(--mono);color:var(--muted);}
+  .fact-val{color:var(--text);text-align:right;max-width:60%;}
+
+  /* PROJECTS */
+  .projects{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+  }
+  .card{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:4px;
+    padding:26px;
+    position:relative;
+    overflow:hidden;
+    transition:border-color 0.25s, transform 0.25s;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    left:var(--mx, 50%);top:var(--my, 50%);
+    width:260px;height:260px;
+    background:radial-gradient(circle, rgba(61,220,255,0.10) 0%, transparent 70%);
+    transform:translate(-50%,-50%);
+    opacity:0;
+    transition:opacity 0.3s;
+    pointer-events:none;
+  }
+  .card:hover::before{opacity:1;}
+  .card:hover{border-color:var(--cyan);transform:translateY(-3px);}
+  .card-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--amber);
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+  .card h3{
+    font-family:var(--display);
+    font-size:20px;
+    margin:10px 0 10px;
+  }
+  .card p{color:var(--muted);font-size:14px;margin-bottom:14px;}
+  .stack{
+    display:flex;flex-wrap:wrap;gap:6px;
+  }
+  .chip{
+    font-family:var(--mono);
+    font-size:10.5px;
+    color:var(--cyan);
+    border:1px solid var(--line);
+    padding:3px 8px;
+    border-radius:2px;
+  }
+  .card.wide{grid-column:1 / -1;}
+
+  /* RECOGNITION */
+  .recog-list{
+    border-left:2px solid var(--line);
+  }
+  .recog-item{
+    padding:18px 0 18px 24px;
+    border-bottom:1px solid var(--line);
+    position:relative;
+  }
+  .recog-item:last-child{border-bottom:none;}
+  .recog-item::before{
+    content:'';
+    position:absolute;left:-6px;top:24px;
+    width:10px;height:10px;
+    border-radius:50%;
+    background:var(--cyan);
+    box-shadow:0 0 8px var(--cyan);
+  }
+  .recog-item h4{font-family:var(--display);font-size:17px;margin-bottom:4px;}
+  .recog-item span{color:var(--muted);font-size:13.5px;font-family:var(--mono);}
+
+  /* FOCUS AREAS */
+  .focus-row{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .focus-pill{
+    font-family:var(--mono);
+    font-size:13px;
+    padding:10px 18px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    color:var(--muted);
+  }
+  .focus-pill.on{
+    color:var(--amber);
+    border-color:var(--amber);
+  }
+
+  /* CONTACT */
+  .contact-box{
+    border:1px solid var(--line);
+    background:var(--panel);
+    border-radius:4px;
+    padding:44px;
+    text-align:center;
+  }
+  .contact-box h2{margin-bottom:14px;}
+  .contact-box p{color:var(--muted);max-width:480px;margin:0 auto 30px;}
+
+  footer{
+    text-align:center;
+    padding:40px 24px 60px;
+    color:var(--muted);
+    font-family:var(--mono);
+    font-size:12px;
+    position:relative;z-index:2;
+  }
+  footer .sign{color:var(--cyan);}
+
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  @media (max-width:760px){
+    .about-grid, .projects{grid-template-columns:1fr;}
+    .navlinks{display:none;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+    .reveal{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="cursor-glow"></div>
+<div class="grain-glow"></div>
+
+<header>
+  <nav>
+    <div class="logo">sonu<span>@cyyber</span></div>
+    <ul class="navlinks">
+      <li><a href="#about" data-nav="about">about</a></li>
+      <li><a href="#projects" data-nav="projects">projects</a></li>
+      <li><a href="#recognition" data-nav="recognition">recognition</a></li>
+      <li><a href="#contact" data-nav="contact">contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero">
+  <canvas id="net-canvas"></canvas>
+  <div class="terminal">
+    <span class="prompt">sonu@ranchi:~$</span> <span id="typed"></span><span class="cursor"></span>
+  </div>
+  <h1 class="name">Sonu<br><span class="alias">/ Cyyber</span></h1>
+  <div class="role">B.Tech CSE (Cybersecurity) · Content Creator · Threat-aware Builder</div>
+  <p class="tagline">I study cybersecurity, build tools that detect what shouldn't be trusted, and run CyyberTalks — a channel that turns breach reports into something people actually watch.</p>
+  <div class="hero-links">
+    <a class="btn primary" href="#projects">View projects</a>
+    <a class="btn" href="https://pdpd.in" target="_blank" rel="noopener">pdpd.in ↗</a>
+    <a class="btn" href="#contact">Get in touch</a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="eyebrow reveal">// about</div>
+  <h2 class="reveal">Studying the systems attackers exploit — and building the ones that catch them.</h2>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p><strong>Sonu</strong> is a B.Tech Computer Science student specializing in Cybersecurity at RTC Institute of Technology, under Jharkhand University of Technology (JUT), Ranchi.</p>
+      <p>Outside coursework, Sonu builds detection tools, competes in tech fests, and runs <strong>CyyberTalks</strong> — a cybersecurity content channel that covers breaches and threat intelligence with an India-relevant lens. Sonu also interned at a Cyber Crime Police Station in Ranchi, and is active as an NCC Cadet and member of IIC and IETE.</p>
+      <p>Long-term focus: a career in government cybersecurity — DRDO Scientist B, CERT-In, or NIC.</p>
+    </div>
+    <div class="facts reveal">
+      <div class="fact-row"><span class="fact-label">degree</span><span class="fact-val">B.Tech CSE — Cybersecurity</span></div>
+      <div class="fact-row"><span class="fact-label">institute</span><span class="fact-val">RTC Institute of Technology (JUT)</span></div>
+      <div class="fact-row"><span class="fact-label">years</span><span class="fact-val">2025 – 2029</span></div>
+      <div class="fact-row"><span class="fact-label">based in</span><span class="fact-val">Ranchi, Jharkhand</span></div>
+      <div class="fact-row"><span class="fact-label">memberships</span><span class="fact-val">NCC · IIC · IETE</span></div>
+      <div class="fact-row"><span class="fact-label">internship</span><span class="fact-val">Cyber Crime Police Station, Ranchi</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="eyebrow reveal">// projects</div>
+  <h2 class="reveal">Selected work</h2>
+  <div class="projects">
+
+    <div class="card wide reveal">
+      <div class="card-tag">Detection System</div>
+      <h3>Deepfake Detection Bot</h3>
+      <p>An AI-based deepfake image detector shipped as a Telegram bot, now on its v2.1 iteration with recency-weighted retraining, adaptive thresholds, per-class accuracy tracking, and an /export command for results. Demonstrated live over Telegram.</p>
+      <div class="stack">
+        <span class="chip">ELA</span>
+        <span class="chip">DCT analysis</span>
+        <span class="chip">Color gradient analysis</span>
+        <span class="chip">Metadata forensics</span>
+        <span class="chip">Feedback-based learning</span>
+        <span class="chip">Python</span>
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-tag">Biometric Security</div>
+      <h3>Gait Pattern Authentication System</h3>
+      <p>An authentication system that identifies users by the way they walk. Awarded 3rd Prize at Tech Fest 2K25.</p>
+      <div class="stack">
+        <span class="chip">Biometrics</span>
+        <span class="chip">Authentication</span>
+      </div>
+    </div>
+
+    <div class="card reveal">
+      <div class="card-tag">Content · Media</div>
+      <h3>CyyberTalks</h3>
+      <p>A cybersecurity content channel producing episode packages on breaches and threat intel with an India-relevant angle — decks, scripts, and thumbnails on a self-built production pipeline.</p>
+      <div class="stack">
+        <span class="chip">YouTube</span>
+        <span class="chip">Threat Intel</span>
+      </div>
+    </div>
+
+    <div class="card wide reveal">
+      <div class="card-tag">Marketplace App</div>
+      <h3>PDPD — Padho Aur Padhao</h3>
+      <p>A peer-to-peer marketplace app for students to buy and sell used academic books, branded PDPD.in.</p>
+      <div class="stack">
+        <span class="chip">Peer-to-peer</span>
+        <span class="chip">EdTech</span>
+        <span class="chip">pdpd.in</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="recognition">
+  <div class="eyebrow reveal">// recognition</div>
+  <h2 class="reveal">Publications &amp; awards</h2>
+  <div class="recog-list reveal">
+    <div class="recog-item">
+      <h4>Springer Publication — ICACA-2026</h4>
+      <span>Research paper published in Springer proceedings</span>
+    </div>
+    <div class="recog-item">
+      <h4>3rd Prize — Tech Fest 2K25</h4>
+      <span>Gait Pattern Authentication System</span>
+    </div>
+  </div>
+</section>
+
+<section id="focus">
+  <div class="eyebrow reveal">// where I'm headed</div>
+  <h2 class="reveal">Career focus</h2>
+  <div class="focus-row reveal">
+    <div class="focus-pill on">DRDO Scientist B</div>
+    <div class="focus-pill on">CERT-In</div>
+    <div class="focus-pill on">NIC</div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-box reveal">
+    <div class="eyebrow" style="text-align:center;">// contact</div>
+    <h2>Let's talk security, content, or collabs.</h2>
+    <p>Open to opportunities in cybersecurity, content collaborations, and interesting problems in general.</p>
+    <div class="hero-links" style="justify-content:center;">
+      <a class="btn primary" href="mailto:your-email@example.com">Email me</a>
+      <a class="btn" href="https://pdpd.in" target="_blank" rel="noopener">pdpd.in ↗</a>
+      <a class="btn" href="#" target="_blank" rel="noopener">YouTube ↗</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="sign">Stay Aware. Stay Secure.</span> — built by Sonu / Cyyber
+</footer>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* reveal-on-scroll */
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* scroll progress bar */
+  const progressBar = document.getElementById('progress');
+  function updateProgress(){
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    progressBar.style.width = scrolled + '%';
+  }
+  document.addEventListener('scroll', updateProgress, {passive:true});
+  updateProgress();
+
+  /* cursor glow */
+  const glow = document.getElementById('cursor-glow');
+  if(!reduceMotion && matchMedia('(hover:hover)').matches){
+    window.addEventListener('mousemove', (e)=>{
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    }, {passive:true});
+  } else {
+    glow.style.display = 'none';
+  }
+
+  /* scrollspy nav */
+  const navLinks = document.querySelectorAll('.navlinks a[data-nav]');
+  const sections = Array.from(navLinks).map(l => document.getElementById(l.dataset.nav)).filter(Boolean);
+  const spy = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const link = document.querySelector('.navlinks a[data-nav="'+entry.target.id+'"]');
+      if(entry.isIntersecting){
+        navLinks.forEach(l=>l.classList.remove('active'));
+        link && link.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-45% 0px -45% 0px'});
+  sections.forEach(s=>spy.observe(s));
+
+  /* card spotlight follow */
+  document.querySelectorAll('.card').forEach(card=>{
+    card.addEventListener('mousemove', (e)=>{
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    });
+  });
+
+  /* magnetic buttons */
+  if(!reduceMotion && matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.btn').forEach(btn=>{
+      btn.addEventListener('mousemove', (e)=>{
+        const r = btn.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width/2) * 0.25;
+        const y = (e.clientY - r.top - r.height/2) * 0.4;
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+      });
+      btn.addEventListener('mouseleave', ()=>{ btn.style.transform = 'translate(0,0)'; });
+    });
+  }
+
+  /* typing terminal effect */
+  const typedEl = document.getElementById('typed');
+  const terminalLines = ['whoami', 'Cybersecurity student. Builder. Cyyber.'];
+  function typeSequence(lines, el, i=0, char=0){
+    if(reduceMotion){ el.textContent = lines[0]; return; }
+    if(i >= lines.length) return;
+    const line = lines[i];
+    if(char <= line.length){
+      if(i === 0){
+        el.textContent = line.slice(0, char);
+      } else {
+        el.innerHTML = lines[0] + '<span class="out">&gt; ' + line.slice(0, char) + '</span>';
+      }
+      setTimeout(()=>typeSequence(lines, el, i, char+1), i===0 ? 90 : 28);
+    } else {
+      setTimeout(()=>typeSequence(lines, el, i+1, 0), 400);
+    }
+  }
+  typeSequence(terminalLines, , typedEl);
+
+  /* node-network canvas background in hero */
+  (function(){
+    const canvas = document.getElementById('net-canvas');
+    const ctx = canvas.getContext('2d');
+    const hero = document.querySelector('.hero');
+    let w, h, nodes;
+
+    function resize(){
+      w = canvas.width = hero.offsetWidth;
+      h = canvas.height = hero.offsetHeight;
+      const count = Math.min(60, Math.floor((w*h)/22000));
+      nodes = Array.from({length: count}, ()=>({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        vx: (Math.random()-0.5)*0.25,
+        vy: (Math.random()-0.5)*0.25
+      }));
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function frame(){
+      ctx.clearRect(0,0,w,h);
+      for(const n of nodes){
+        n.x += n.vx; n.y += n.vy;
+        if(n.x < 0 || n.x > w) n.vx *= -1;
+        if(n.y < 0 || n.y > h) n.vy *= -1;
+      }
+      for(let i=0;i<nodes.length;i++){
+        for(let j=i+1;j<nodes.length;j++){
+          const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if(dist < 140){
+            ctx.strokeStyle = 'rgba(61,220,255,' + (0.12 * (1 - dist/140)) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      for(const n of nodes){
+        ctx.fillStyle = 'rgba(61,220,255,0.55)';
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 1.6, 0, Math.PI*2);
+        ctx.fill();
+      }
+      if(!reduceMotion) requestAnimationFrame(frame);
+    }
+    if(!reduceMotion) requestAnimationFrame(frame);
+    else { ctx.clearRect(0,0,w,h); }
+  })();
+</script>
+
+</body>
+</html>
